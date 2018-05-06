@@ -8,7 +8,7 @@ Python module to facilitate calculating the checksum or hash of a file.  Tested 
 
 The ``FileHash`` class wraps around the ``hashlib`` module and contains the following methods:
 
-- ``hash_file(filename)`` - Calculate the file has for a single file.  Returns a string with the hex digest.
+- ``hash_file(filename)`` - Calculate the file hash for a single file.  Returns a string with the hex digest.
 - ``hash_dir(path, pattern='*')`` - Calculate the file hashes for an entire directory.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
 - ``verify_checksums(checksum_filename)`` - Reads the specified file and calculates the hashes for the files listed, comparing the calculated hashes against the specified expected hashes.  Returns a list of tuples where each tuple contains the filename and a boolean value indicating if the calculated hash matches the expected hash.
 
