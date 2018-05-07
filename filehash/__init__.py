@@ -1,6 +1,6 @@
 try:
-    from filehash import FileHash
+    from filehash import FileHash, SUPPORTED_ALGORITHMS
 except ImportError:
-    from .filehash import FileHash
+    from .filehash import FileHash, SUPPORTED_ALGORITHMS
 
-__all__ = ["FileHash"]
+__all__ = ["FileHash", "SUPPORTED_ALGORITHMS"]

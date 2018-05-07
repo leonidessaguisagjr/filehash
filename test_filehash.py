@@ -1,17 +1,21 @@
+import inspect
 import os.path
 import unittest
 
-from filehash import FileHash
-from filehash.filehash import CRC32
+import filehash.filehash
+from filehash import FileHash, SUPPORTED_ALGORITHMS
+
 
 
 class TestFileHash(unittest.TestCase):
+    """Test the FileHash class."""
 
     def setUp(self):
         self.test_filenames = ['lorem_ipsum.txt', 'lorem_ipsum.zip']
-        self.algorithms = ['crc32', 'md5', 'sha1', 'sha256', 'sha512']
+        # Expected results from https://www.fileformat.info/tool/hash.htm
         self.expected_results = {
             'lorem_ipsum.txt': {
+                'adler32': 'E5ED731F',
                 'crc32': 'A8504B9F',
                 'md5': '72f5d9e3a5fa2f2e591487ae02489388',
                 'sha1': 'f7ef3b7afaf1518032da1b832436ef3bbfd4e6f0',
@@ -19,6 +23,7 @@ class TestFileHash(unittest.TestCase):
                 'sha512': 'dfc4e13af6e57b4982bdac595e83804dcb2d126204baa290f19015982d13e822a07efa1f0e63a8078e10f219c69d26caf4f21a50e3dd5bdf09bea73dfe224e43'
             },
             'lorem_ipsum.zip': {
+                'adler32': '5195A9D6',
                 'crc32': '7425D3BE',
                 'md5': '860f55178330e675fb0d55ac1f2c27b2',
                 'sha1': '03da86258449317e8834a54cf8c4d5b41e7c7128',
@@ -33,14 +38,16 @@ class TestFileHash(unittest.TestCase):
         os.chdir(self.current_dir)
 
     def test_hash_file(self):
-        for algo in self.algorithms:
+        """Test the hash_file() method."""
+        for algo in SUPPORTED_ALGORITHMS:
             for filename in self.test_filenames:
                 hasher = FileHash(algo)
                 self.assertEqual(self.expected_results[filename][algo], hasher.hash_file(filename))
 
     def test_hash_dir(self):
+        """"Test the hash_dir() method."""
         os.chdir("..")
-        for algo in self.algorithms:
+        for algo in SUPPORTED_ALGORITHMS:
             for filename in self.test_filenames:
                 hasher = FileHash(algo)
                 basename, ext = os.path.splitext(filename)
@@ -49,48 +56,83 @@ class TestFileHash(unittest.TestCase):
                     self.assertEqual(self.expected_results[filename][algo], result.hash)
 
     def test_verify_checksums(self):
-        for algo in self.algorithms:
+        """Test the verify_checksums() method."""
+        for algo in SUPPORTED_ALGORITHMS:
             hasher = FileHash(algo)
             results = [result.hashes_match for result in hasher.verify_checksums("hashes." + algo)]
             self.assertTrue(all(results))
 
     def test_verify_sfv(self):
+        """Test the verify_sfv() method."""
         hasher = FileHash('crc32')
         results = [result.hashes_match for result in hasher.verify_sfv("lorem_ipsum.sfv")]
         self.assertTrue(all(results))
 
     def test_verify_sfv_neg(self):
+        """Test that verify_sfv() raises an exception if it is not using crc32."""
         hasher = FileHash('sha1')
         self.assertRaises(TypeError, hasher.verify_sfv, "lorem_ipsum.sfv")
 
 
-class TestCRC32(unittest.TestCase):
+class TestZlibHasherSubclasses(unittest.TestCase):
+    """Test the subclasses of ZlibHasherBase i.e. Adler32, CRC32."""
+
+    def setUp(self):
+        """Dynamically get the list of subclasses for ZlibHasherBase."""
+        def is_zlibhasherbase_subclass(o):
+            return inspect.isclass(o) and issubclass(o, filehash.filehash.ZlibHasherBase)
+        self.zlib_hashers = inspect.getmembers(filehash.filehash,
+                                               predicate=is_zlibhasherbase_subclass)
+        # inspect.getmembers() returns tuples of names and classes.  issubclass()
+        # considers a class to be a subclass of itself.  So we need to remove
+        # ZlibHasherBase from the list of subclasses, and convert it into a flat
+        # list of just the classes (no names).
+        self.zlib_hashers = [hasher[1] for hasher in self.zlib_hashers
+                             if hasher[0] != filehash.filehash.ZlibHasherBase.__name__]
 
     def test_name(self):
-        hash = CRC32()
-        self.assertEqual(hash.__class__.__name__.lower(), CRC32.name)
+        """
+        Test that the Class.name attribute is the same as the class name in lowercase.
+        """
+        for hasher in self.zlib_hashers:
+            hash = hasher()
+            self.assertEqual(hash.__class__.__name__.lower(), hasher.name)
 
     def test_hexdigest(self):
-        hash = CRC32()
-        hash.update(b'The quick brown fox jumps over the lazy dog')
-        self.assertEqual(hex(hash.digest()).upper()[2:], hash.hexdigest())
+        """Test the format of hexdigest();"""
+        for hasher in self.zlib_hashers:
+            hash = hasher()
+            hash.update(b'The quick brown fox jumps over the lazy dog')
+            self.assertEqual(hex(hash.digest()).upper()[2:], hash.hexdigest())
 
     def test_update(self):
-        hash1 = CRC32()
-        hash1.update(b'The quick brown fox ')
-        hash1.update(b'jumps over the lazy dog')
-        hash2 = CRC32()
-        hash2.update(b'The quick brown fox jumps over the lazy dog')
-        self.assertEqual(hash1.digest(), hash2.digest())
-        self.assertEqual(hash1.hexdigest(), hash2.hexdigest())
+        """
+        Test the behavior of the update() method.
+
+        m.update(a); m.update(b) is equivalent to m.update(a+b)
+        """
+        for hasher in self.zlib_hashers:
+            hash1 = hasher()
+            hash1.update(b'The quick brown fox ')
+            hash1.update(b'jumps over the lazy dog')
+            hash2 = hasher()
+            hash2.update(b'The quick brown fox jumps over the lazy dog')
+            self.assertEqual(hash1.digest(), hash2.digest())
+            self.assertEqual(hash1.hexdigest(), hash2.hexdigest())
 
     def test_copy(self):
-        hash1 = CRC32()
-        hash1.update(b'The quick brown fox ')
-        hash2 = hash1.copy()
-        self.assertEqual(hash1.digest(), hash2.digest())
-        hash2.update(b'jumps over the lazy dog')
-        self.assertNotEqual(hash1.digest(), hash2.digest())
+        """
+        Test the behavior of the copy() method.  The call to copy() should
+        create a new instance with the same initial digest value as the original
+        object.
+        """
+        for hasher in self.zlib_hashers:
+            hash1 = hasher()
+            hash1.update(b'The quick brown fox ')
+            hash2 = hash1.copy()
+            self.assertEqual(hash1.digest(), hash2.digest())
+            hash2.update(b'jumps over the lazy dog')
+            self.assertNotEqual(hash1.digest(), hash2.digest())
 
 
 if __name__ == "__main__":
