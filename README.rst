@@ -10,6 +10,7 @@ The ``FileHash`` class wraps around the ``hashlib`` module and contains the foll
 
 - ``hash_file(filename)`` - Calculate the file hash for a single file.  Returns a string with the hex digest.
 - ``hash_dir(path, pattern='*')`` - Calculate the file hashes for an entire directory.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
+- ``verify_sfv(sfv_filename)`` - Reads the specified SFV (Simple File Verification) file and calculates the CRC32 checksum for the files listed, comparing the calculated CRC32 checksums against the specified expected checksums.  Returns a list of tuples where each tuple contains the filename and a boolean value indicating if the calculated CRC32 checksum matches the expected CRC32 checksum.  To find out more about SFV files, see the `Simple file verification entry in Wikipedia <https://en.wikipedia.org/wiki/Simple_file_verification>`_.
 - ``verify_checksums(checksum_filename)`` - Reads the specified file and calculates the hashes for the files listed, comparing the calculated hashes against the specified expected hashes.  Returns a list of tuples where each tuple contains the filename and a boolean value indicating if the calculated hash matches the expected hash.
 
 For the checksum file, the file is expected to be a plain text file where each line has an entry formatted as follows::
@@ -23,7 +24,7 @@ This format is the format used by programs such as the ``sha1sum`` family of too
 
 The ``FileHash`` constructor has two optional arguments:
 
-- ``hash_algorithm='sha256'`` - Specifies the hashing algorithm to use.  Use ``hashlib.algorithms_available`` to get a list of possible hashing algorithms to use.  Defaults to SHA256.
+- ``hash_algorithm='sha256'`` - Specifies the hashing algorithm to use.  Use ``hashlib.algorithms_available`` to get a list of possible hashing algorithms to use.  In addition to the hashing algorithms provided in ``hashlib``, there is also support for crc32 checksums as provided by ``zlib.crc32``.  Defaults to SHA256.
 - ``chunk_size=4096`` - Integer specifying the chunk size to use (in bytes) when reading the file.  This comes in useful when processing very large files to avoid having to read the entire file into memory all at once.  Default chunk size is 4096 bytes.
 
 Example usage
@@ -42,6 +43,9 @@ The library can be used as follows::
    >>> sha512hasher = FileHash('sha512')
    >>> os.chdir("./testdata")
    >>> sha512hasher.verify_checksums("./hashes.sha512")
+   [VerifyHashResult(filename='lorem_ipsum.txt', hashes_match=True), VerifyHashResult(filename='lorem_ipsum.zip', hashes_match=True)]
+   >>> crc32hasher = FileHash('crc32')
+   >>> crc32hasher.verify_sfv("./lorem_ipsum.sfv")
    [VerifyHashResult(filename='lorem_ipsum.txt', hashes_match=True), VerifyHashResult(filename='lorem_ipsum.zip', hashes_match=True)]
 
 License

@@ -3,11 +3,68 @@ import glob
 import hashlib
 import os
 import os.path
+import zlib
 
 
 FileHashResult = collections.namedtuple("FileHashResult", ["filename", "hash"])
 VerifyHashResult = collections.namedtuple("VerifyHashResult",
                                           ["filename", "hashes_match"])
+
+
+class CRC32:
+    """
+    Wrapper around zlib.crc32 to calculate the crc32 checksum with a similar
+    interface as the algorithms in hashlib.
+    """
+    name = 'crc32'
+    digest_size = 4
+    block_size = 1
+
+    def __init__(self, arg=None):
+        """
+        Initialize the class.
+
+        :param arg: String to calculate the digest for.
+        """
+        self._digest = 0
+        if arg is not None:
+            self.update(arg)
+
+    def update(self, arg):
+        """
+        Update the crc32 object with the string arg.  Repeated calls are
+        equivalent to a single call with the concatenation of all the arguments:
+        m.update(a); m.update(b) is equivalent to m.update(a+b).
+
+        :param arg: String to update the digest with.
+        """
+        self._digest = zlib.crc32(arg, self._digest) & 0xFFFFFFFF
+
+    def digest(self):
+        """
+        Return the digest of the strings passed to the update() method so far.
+        This is a string of digest_size bytes which may contain non-ASCII
+        characters, including null bytes.
+        """
+        return self._digest
+
+    def hexdigest(self):
+        """
+        Like digest() except the digest is returned as a string of double length,
+        containing only hexadecimal digists.  This may be used to exchange the
+        value safely in email or other non-binary environments.
+        """
+        return hex(self._digest).upper()[2:]
+
+    def copy(self):
+        """
+        Return a copy ("clone") of the hash object.  This can be used to
+        efficiently compute the digests of strings that share a common initial
+        substring.
+        """
+        copy = CRC32()
+        copy._digest = self._digest
+        return copy
 
 
 class FileHash:
@@ -38,7 +95,10 @@ class FileHash:
         :returns: Digest of the file, in hex.
         """
         with open(filename, mode="rb", buffering=0) as fp:
-            hash_func = hashlib.new(self.hash_algorithm)
+            if self.hash_algorithm.lower() == 'crc32':
+                hash_func = CRC32()
+            else:
+                hash_func = hashlib.new(self.hash_algorithm)
             buffer = fp.read(self.chunk_size)
             while len(buffer) > 0:
                 hash_func.update(buffer)
@@ -90,4 +150,38 @@ class FileHash:
                     filename = filename[1:]
                 actual_hash = self.hash_file(filename)
                 result.append(VerifyHashResult(filename, expected_hash == actual_hash))
+        return result
+
+    def verify_sfv(self, sfv_filename):
+        """
+        Method for verifying the checksums of a file or set of files.  The
+        sfv (Simple File Verification) file is a text file where each line has
+        the filename and CRC32 in the following format:
+
+        filename[SPACE]crc32
+
+        Lines that start with a ';' are comments.  For example:
+
+        ;       10062  12:22.AM 2018-05-06 lorem_ipsum.txt
+        ;       3498  12:23.AM 2018-05-06 lorem_ipsum.zip
+        lorem_ipsum.txt A8504B9F
+        lorem_ipsum.zip 7425D3BE
+
+        :param sfv_filename: Name of the file that contains the filenames and
+                                  corresponding crc32 hashes of the files to be
+                                  verified.
+        :returns: A list of tuples where each tuple contains a filename and a
+                  Boolean value indicating if the crc32 matched (True) or if
+                  there was a crc32 mismatch (False).
+        """
+        if self.hash_algorithm.lower() != 'crc32':
+            raise TypeError("SFV verification only supported with the 'crc32' algorithm.")
+        result = []
+        with open(sfv_filename, mode="r") as checksum_list:
+            for line in checksum_list:
+                if line.startswith(";"):
+                    continue
+                filename, expected_crc32 = line.strip().split(" ", 1)
+                actual_crc32 = self.hash_file(filename)
+                result.append(VerifyHashResult(filename, expected_crc32 == actual_crc32))
         return result
