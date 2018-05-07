@@ -6,7 +6,7 @@ Python module to facilitate calculating the checksum or hash of a file.  Tested 
 ``FileHash`` class
 ------------------
 
-The ``FileHash`` class wraps around the ``hashlib`` module and contains the following methods:
+The ``FileHash`` class wraps around the ``hashlib`` and ``zlib`` modules and contains the following methods:
 
 - ``hash_file(filename)`` - Calculate the file hash for a single file.  Returns a string with the hex digest.
 - ``hash_dir(path, pattern='*')`` - Calculate the file hashes for an entire directory.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
