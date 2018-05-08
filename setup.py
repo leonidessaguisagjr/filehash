@@ -10,13 +10,15 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='filehash',
-      version='0.1.dev2',
-      description='Module that wraps around hashlib and zlib to facilitate generating checksums / hashes of files and directories.',
+      version='0.1.dev3',
+      description='Module and command-line tool that wraps around hashlib and zlib to facilitate generating checksums / hashes of files and directories.',
       long_description=long_description,
       long_description_content_type='text/x-rst',
       classifiers=[
             "Development Status :: 3 - Alpha",
+            "Environment :: Console",
             "Intended Audience :: Developers",
+            "Intended Audience :: End Users/Desktop",
             "License :: OSI Approved :: MIT License",
             "Programming Language :: Python",
             "Programming Language :: Python :: 2",
@@ -32,4 +34,9 @@ setup(name='filehash',
       license='MIT',
       packages=['filehash'],
       include_package_data=True,
-      zip_safe=False)
+      zip_safe=False,
+      entry_points={
+          'console_scripts': [
+              'chkfilehash = filehash.filehash_cli:main',
+          ],
+      })

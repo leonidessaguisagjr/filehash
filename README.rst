@@ -48,6 +48,21 @@ The library can be used as follows::
    >>> crc32hasher.verify_sfv("./lorem_ipsum.sfv")
    [VerifyHashResult(filename='lorem_ipsum.txt', hashes_match=True), VerifyHashResult(filename='lorem_ipsum.zip', hashes_match=True)]
 
+
+``chkfilehash`` command line tool
+---------------------------------
+
+A command-line tool called ``chkfilehash`` is also included with the ``filehash`` package.  Here is an example of how the tool can be used::
+
+   $ chkfilehash -a sha512 -c hashes.sha512
+   lorem_ipsum.txt: OK
+   lorem_ipsum.zip: OK
+   $ chkfilehash -a crc32 lorem_ipsum.zip
+   7425D3BE *lorem_ipsum.zip
+   $
+
+Run the tool without any parameters or with the ``-h`` / ``--help`` switch to get a usage screen.
+
 License
 -------
 
