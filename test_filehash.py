@@ -139,6 +139,29 @@ class TestFileHash(unittest.TestCase):
                     ][algo]
                 )
 
+    def test_cathash_dir(self):
+        """"Test the cathash_dir() method."""
+        os.chdir("..")
+        for algo in SUPPORTED_ALGORITHMS:
+            hasher = FileHash(algo)
+            self.assertEqual(
+                hasher.cathash_dir("./testdata", "*.txt"),
+                self.expected_results['lorem_ipsum.txt'][algo]
+                )
+            self.assertEqual(
+                hasher.cathash_dir("./testdata", "*.zip"),
+                self.expected_results['lorem_ipsum.zip'][algo]
+                )
+            self.assertEqual(
+                hasher.cathash_dir("./testdata", "*.[ziptxt]*"),
+                self.expected_results[
+                    'lorem_ipsum_zip+txt.cat' if
+                        (self.expected_results['lorem_ipsum.txt'][algo] >
+                            self.expected_results['lorem_ipsum.zip'][algo])
+                        else 'lorem_ipsum_txt+zip.cat'
+                    ][algo]
+                    )
+
     def test_verify_checksums(self):
         """Test the verify_checksums() method."""
         for algo in SUPPORTED_ALGORITHMS:
