@@ -11,7 +11,6 @@ class TestFileHash(unittest.TestCase):
     """Test the FileHash class."""
 
     def setUp(self):
-        self.test_filenames = ['lorem_ipsum.txt', 'lorem_ipsum.zip']
         # Expected results from https://www.fileformat.info/tool/hash.htm
         self.expected_results = {
             'lorem_ipsum.txt': {
@@ -56,7 +55,7 @@ class TestFileHash(unittest.TestCase):
     def test_hash_file(self):
         """Test the hash_file() method."""
         for algo in SUPPORTED_ALGORITHMS:
-            for filename in self.test_filenames:
+            for filename in self.expected_results.keys():
                 hasher = FileHash(algo)
                 self.assertEqual(self.expected_results[filename][algo], hasher.hash_file(filename))
 
@@ -64,18 +63,22 @@ class TestFileHash(unittest.TestCase):
         """"Test the hash_dir() method."""
         os.chdir("..")
         for algo in SUPPORTED_ALGORITHMS:
-            for filename in self.test_filenames:
+            for filename in self.expected_results.keys():
                 hasher = FileHash(algo)
                 basename, ext = os.path.splitext(filename)
                 results = hasher.hash_dir("./testdata", "*" + ext)
                 for result in results:
-                    self.assertEqual(self.expected_results[filename][algo], result.hash)
-                    self.assertEqual(filename,result.filename)
+                    self.assertEqual(
+                        self.expected_results[result.filename][algo],
+                        result.hash
+                        )
+                    if len(results) == 1:
+                        self.assertEqual(filename,result.filename)
 
     def test_cathash_files(self):
         """Test the cathash_files() method."""
         for algo in SUPPORTED_ALGORITHMS:
-            for filename in self.test_filenames:
+            for filename in self.expected_results.keys():
                 hasher = FileHash(algo)
                 self.assertEqual(
                     self.expected_results[filename][algo],
