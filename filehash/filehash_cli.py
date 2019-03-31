@@ -19,12 +19,20 @@ def parse_command_line():
             ", ".join(['"' + a + '"' for a in SUPPORTED_ALGORITHMS]),
             default_hash_algorithm
         ),
-        default=default_hash_algorithm)
+        default=default_hash_algorithm
+    )
+
     parser_group = parser.add_mutually_exclusive_group(required=True)
-    parser_group.add_argument(u"-c", u"--checksums",
-                              help=u"Read the file and verify the checksums/hashes match.")
-    parser_group.add_argument(u"-d", u"--directory",
-                              help=u"Calculate the checksums/hashes for a directory.")
+    parser_group.add_argument(
+        u"-c",
+        u"--checksums",
+        help=u"Read the file and verify the checksums/hashes match."
+        )
+    parser_group.add_argument(
+        u"-d",
+        u"--directory",
+        help=u"Calculate the checksums/hashes for a directory."
+        )
     parser_group.add_argument(
         u"filenames",
         default=[],
