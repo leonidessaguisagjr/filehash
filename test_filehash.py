@@ -130,13 +130,14 @@ class TestFileHash(unittest.TestCase):
             # hash of multiple files should be same as
             # hash of files catted together
             self.assertEqual(
-                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']), hasher.hash_file(
+                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
+                self.expected_results[
                     'lorem_ipsum_zip+txt.cat' if
-                    (hasher.hash_file('lorem_ipsum.txt') >
-                        hasher.hash_file('lorem_ipsum.zip'))
-                    else 'lorem_ipsum_txt+zip.cat'
+                        (self.expected_results['lorem_ipsum.txt'][algo] >
+                            self.expected_results['lorem_ipsum.zip'][algo])
+                        else 'lorem_ipsum_txt+zip.cat'
+                    ][algo]
                 )
-            )
 
     def test_verify_checksums(self):
         """Test the verify_checksums() method."""
