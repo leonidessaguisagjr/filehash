@@ -62,6 +62,30 @@ class TestFileHash(unittest.TestCase):
                     hasher.hash_file(filename)
                     )
 
+    def test_hash_files(self):
+        """Test the hash_files() method."""
+        for algo in SUPPORTED_ALGORITHMS:
+            hasher = FileHash(algo)
+            # test on singleton lists of filenames
+            for filename in self.expected_results.keys():
+                results = hasher.hash_files([filename])
+                self.assertEqual(len(results), 1)
+                for result in results:
+                    self.assertEqual(
+                        self.expected_results[filename][algo],
+                        result.hash
+                        )
+                    self.assertEqual(filename, result.filename)
+
+            # test on all filenames at once
+            results = hasher.hash_files(self.expected_results.keys())
+            self.assertEqual(len(results), len(self.expected_results))
+            for result in results:
+                self.assertEqual(
+                    self.expected_results[result.filename][algo],
+                    result.hash
+                    )
+
     def test_hash_dir(self):
         """"Test the hash_dir() method."""
         os.chdir("..")
