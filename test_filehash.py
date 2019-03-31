@@ -31,16 +31,16 @@ class TestFileHash(unittest.TestCase):
                 'sha512': 'edd841dd0ed5bb09fd21054de3aebbbd44d779beaa0289d63bfb64f0eaaa85c73993d5cbc0d0d1dfcc263d7bd8d43bdafe2bcc398cc8453823e50f0d90a3b0ff'
             },
             'lorem_ipsum_txt+zip.cat': {
-                'adler32': '8ba81d03',
-                'crc32': 'c2d8ad7f',
+                'adler32': '8BA81D03',
+                'crc32': 'C2D8AD7F',
                 'md5': '96a7ef7737b1469621832ef6f5b0bc25',
                 'sha1': '1ac64d235601ba35d44c56953f338cba294bff9f',
                 'sha256': '49809760aa14e469d3b0bed8a4ba02d46fc5f61f5002499fe10e18d8c531925c',
                 'sha512': '986783f5f27cbed97b2b1646239ea34d25812c3cb69a80116137e544285a8032df940963ae42576931a35195c433ab0239ea012469b21fcb3df23fce21a9dfba'
             },
             'lorem_ipsum_zip+txt.cat': {
-                'adler32': 'f0a31d03',
-                'crc32': '6ea6de9b',
+                'adler32': 'F0A31D03',
+                'crc32': '6EA6DE9B',
                 'md5': '5ff44b587e9630bff7134b7e00726b44',
                 'sha1': 'f1741c227c170061863370cc89af4932fad5fcb7',
                 'sha256': '64bd25fbb84590cafd716d373796df3a2510e6a14104c30c7d83574cadd6277f',
