@@ -34,6 +34,12 @@ def parse_command_line():
         help=u"Calculate the checksums/hashes for a directory."
         )
     parser_group.add_argument(
+        u"-t",
+        u"--cathash",
+        nargs='+',
+        help=u"Process multiple files to yield a single hash value."
+        )
+    parser_group.add_argument(
         u"filenames",
         default=[],
         nargs='*',
@@ -49,6 +55,11 @@ def process_dir(directory, hasher):
     results = hasher.hash_dir(directory)
     for result in results:
         print("{0} *{1}".format(result.hash, result.filename))
+
+
+def process_cathash(filenames, hasher):
+    result = hasher.cathash_files(filenames)
+    print("{0} *{1}".format(result, " ".join(filenames)))
 
 
 def process_files(filenames, hasher):
@@ -89,6 +100,8 @@ def main():
         process_checksum_file(args.checksums, hasher)
     elif args.directory:
         process_dir(args.directory, hasher)
+    elif args.cathash:
+        process_cathash(args.cathash, hasher)
     else:
         process_files(args.filenames, hasher)
 
