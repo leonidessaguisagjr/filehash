@@ -25,7 +25,12 @@ def parse_command_line():
                               help=u"Read the file and verify the checksums/hashes match.")
     parser_group.add_argument(u"-d", u"--directory",
                               help=u"Calculate the checksums/hashes for a directory.")
-    parser_group.add_argument(u"filename", nargs="?", help=u"file to calculate the checksum/hash")
+    parser_group.add_argument(
+        u"filenames",
+        default=[],
+        nargs='*',
+        help=u"files to calculate the checksum/hash on"
+        )
     return parser.parse_args()
 
 
@@ -38,12 +43,13 @@ def process_dir(directory, hasher):
         print("{0} *{1}".format(result.hash, result.filename))
 
 
-def process_file(filename, hasher):
-    if not os.path.isfile(filename):
-        print("ERROR: Unable to read file: {0}".format(filename))
-        sys.exit(1)
-    result = hasher.hash_file(filename)
-    print("{0} *{1}".format(result, filename))
+def process_files(filenames, hasher):
+    for filename in filenames:
+        if not os.path.isfile(filename):
+            print("ERROR: Unable to read file: {0}".format(filename))
+            sys.exit(1)
+        result = hasher.hash_file(filename)
+        print("{0} *{1}".format(result, filename))
 
 
 def process_checksum_file(checksum_filename, hasher):
@@ -76,7 +82,7 @@ def main():
     elif args.directory:
         process_dir(args.directory, hasher)
     else:
-        process_file(args.filename, hasher)
+        process_files(args.filenames, hasher)
 
 
 if __name__ == "__main__":
