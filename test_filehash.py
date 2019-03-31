@@ -70,6 +70,7 @@ class TestFileHash(unittest.TestCase):
                 results = hasher.hash_dir("./testdata", "*" + ext)
                 for result in results:
                     self.assertEqual(self.expected_results[filename][algo], result.hash)
+                    self.assertEqual(filename,result.filename)
 
     def test_cathash_files(self):
         """Test the cathash_files() method."""
