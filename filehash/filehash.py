@@ -186,16 +186,10 @@ class FileHash:
         Method for calculating the hash of multiple files.
 
         :param filenames: List of names of files to calculate the hash for.
-        :returns: Digest of the files, in hex.
+        :returns: List of tuples where each tuple contains a filename and the
+                  calculated hash for each file.
         """
-        hash_func = _ALGORITHM_MAP[self.hash_algorithm]()
-        for filename in sorted(filenames, key=lambda x: self.hash_file(x)):
-            with open(filename, mode="rb", buffering=0) as fp:
-                buffer = fp.read(self.chunk_size)
-                while len(buffer) > 0:
-                    hash_func.update(buffer)
-                    buffer = fp.read(self.chunk_size)
-        return hash_func.hexdigest()
+        return [FileHashResult(fn, self.hash_file(fn)) for fn in filenames]
 
     def hash_dir(self, path, pattern='*'):
         """
@@ -207,13 +201,44 @@ class FileHash:
         :returns: List of tuples where each tuple contains a filename and the
                   calculated hash for each file.
         """
-        result = []
         saved_dir = os.getcwd()
         os.chdir(os.path.abspath(path))  # pushd
         filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
-        for filename in filenames:
-            hash = self.hash_file(filename)
-            result.append(FileHashResult(filename, hash))
+        result = self.hash_files(filenames)
+        os.chdir(saved_dir)  # popd
+        return result
+
+    def cathash_files(self, filenames):
+        """
+        Method for calculating a single hash from multiple files.
+        Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.
+
+        :param filenames: List of names of files to calculate the hash for.
+        :returns: Digest of the files, in hex.
+        """
+        hash_func = _ALGORITHM_MAP[self.hash_algorithm]()
+        for filename in sorted(filenames, key=lambda x: self.hash_file(x)):
+            with open(filename, mode="rb", buffering=0) as fp:
+                buffer = fp.read(self.chunk_size)
+                while len(buffer) > 0:
+                    hash_func.update(buffer)
+                    buffer = fp.read(self.chunk_size)
+        return hash_func.hexdigest()
+
+    def cathash_dir(self, path, pattern='*'):
+        """
+        Method for calculating a single hash of files in a directory.
+        Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.
+
+        :param path: Directory of files to hash.
+        :param pattern: Pattern to determine which files to calculate hashes.
+                        Defaults to '*' i.e. all files in the directory.
+        :returns: Digest of the files, in hex.
+        """
+        saved_dir = os.getcwd()
+        os.chdir(os.path.abspath(path))  # pushd
+        filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
+        result = self.cathash_files(filenames)
         os.chdir(saved_dir)  # popd
         return result
 

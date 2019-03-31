@@ -60,42 +60,6 @@ class TestFileHash(unittest.TestCase):
                 hasher = FileHash(algo)
                 self.assertEqual(self.expected_results[filename][algo], hasher.hash_file(filename))
 
-    def test_hash_files(self):
-        """Test the hash_files() method."""
-        for algo in SUPPORTED_ALGORITHMS:
-            for filename in self.test_filenames:
-                hasher = FileHash(algo)
-                self.assertEqual(
-                    self.expected_results[filename][algo],
-                    hasher.hash_files([filename])
-                )
-
-            hasher = FileHash(algo)
-            # shouldn't matter how you order filenames
-            self.assertEqual(
-                hasher.hash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
-                hasher.hash_files(['lorem_ipsum.zip', 'lorem_ipsum.txt']),
-                )
-            # filenames thmeselves shouldn't matter
-            self.assertEqual(
-                hasher.hash_files(['./lorem_ipsum.txt', 'lorem_ipsum.zip']),
-                hasher.hash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
-                )
-            self.assertEqual(
-                hasher.hash_files(['lorem_ipsum.txt', './lorem_ipsum.zip']),
-                hasher.hash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
-                )
-            # hash of multiple files should be same as
-            # hash of files catted together
-            self.assertEqual(
-                hasher.hash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']), hasher.hash_file(
-                    'lorem_ipsum_zip+txt.cat' if
-                    (hasher.hash_file('lorem_ipsum.txt') >
-                        hasher.hash_file('lorem_ipsum.zip'))
-                    else 'lorem_ipsum_txt+zip.cat'
-                )
-            )
-
     def test_hash_dir(self):
         """"Test the hash_dir() method."""
         os.chdir("..")
@@ -106,6 +70,42 @@ class TestFileHash(unittest.TestCase):
                 results = hasher.hash_dir("./testdata", "*" + ext)
                 for result in results:
                     self.assertEqual(self.expected_results[filename][algo], result.hash)
+
+    def test_cathash_files(self):
+        """Test the cathash_files() method."""
+        for algo in SUPPORTED_ALGORITHMS:
+            for filename in self.test_filenames:
+                hasher = FileHash(algo)
+                self.assertEqual(
+                    self.expected_results[filename][algo],
+                    hasher.cathash_files([filename])
+                )
+
+            hasher = FileHash(algo)
+            # shouldn't matter how you order filenames
+            self.assertEqual(
+                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
+                hasher.cathash_files(['lorem_ipsum.zip', 'lorem_ipsum.txt']),
+                )
+            # filenames thmeselves shouldn't matter
+            self.assertEqual(
+                hasher.cathash_files(['./lorem_ipsum.txt', 'lorem_ipsum.zip']),
+                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
+                )
+            self.assertEqual(
+                hasher.cathash_files(['lorem_ipsum.txt', './lorem_ipsum.zip']),
+                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']),
+                )
+            # hash of multiple files should be same as
+            # hash of files catted together
+            self.assertEqual(
+                hasher.cathash_files(['lorem_ipsum.txt', 'lorem_ipsum.zip']), hasher.hash_file(
+                    'lorem_ipsum_zip+txt.cat' if
+                    (hasher.hash_file('lorem_ipsum.txt') >
+                        hasher.hash_file('lorem_ipsum.zip'))
+                    else 'lorem_ipsum_txt+zip.cat'
+                )
+            )
 
     def test_verify_checksums(self):
         """Test the verify_checksums() method."""
