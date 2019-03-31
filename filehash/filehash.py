@@ -181,6 +181,22 @@ class FileHash:
                 buffer = fp.read(self.chunk_size)
         return hash_func.hexdigest()
 
+    def hash_files(self, filenames):
+        """
+        Method for calculating the hash of multiple files.
+
+        :param filenames: List of names of files to calculate the hash for.
+        :returns: Digest of the files, in hex.
+        """
+        hash_func = _ALGORITHM_MAP[self.hash_algorithm]()
+        for filename in filenames:
+            with open(filename, mode="rb", buffering=0) as fp:
+                buffer = fp.read(self.chunk_size)
+                while len(buffer) > 0:
+                    hash_func.update(buffer)
+                    buffer = fp.read(self.chunk_size)
+        return hash_func.hexdigest()
+            
     def hash_dir(self, path, pattern='*'):
         """
         Method for calculating the hash of files in a directory.
