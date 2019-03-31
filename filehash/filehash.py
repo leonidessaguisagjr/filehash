@@ -196,7 +196,7 @@ class FileHash:
                     hash_func.update(buffer)
                     buffer = fp.read(self.chunk_size)
         return hash_func.hexdigest()
-            
+
     def hash_dir(self, path, pattern='*'):
         """
         Method for calculating the hash of files in a directory.
