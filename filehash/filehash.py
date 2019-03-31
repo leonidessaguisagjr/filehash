@@ -189,7 +189,7 @@ class FileHash:
         :returns: Digest of the files, in hex.
         """
         hash_func = _ALGORITHM_MAP[self.hash_algorithm]()
-        for filename in filenames:
+        for filename in sorted(filenames, key=lambda x: self.hash_file(x)):
             with open(filename, mode="rb", buffering=0) as fp:
                 buffer = fp.read(self.chunk_size)
                 while len(buffer) > 0:
