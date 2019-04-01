@@ -5,6 +5,7 @@ import unittest
 import filehash.filehash
 from filehash import FileHash, SUPPORTED_ALGORITHMS
 
+from filehash.filehash_cli import create_parser
 
 
 class TestFileHash(unittest.TestCase):
@@ -241,6 +242,86 @@ class TestZlibHasherSubclasses(unittest.TestCase):
             hash2.update(b'jumps over the lazy dog')
             self.assertNotEqual(hash1.digest(), hash2.digest())
 
+
+class TestCLI(unittest.TestCase):
+    """Test the CLI."""
+
+    def setUp(self):
+        self.parser = create_parser()
+
+    def test_with_empty_args(self):
+        """
+        User passes no args, should fail with SystemExit
+        """
+        with self.assertRaises(SystemExit):
+            self.parser.parse_args([])
+
+    def test_filenames(self):
+        """
+        Test parsing filenames
+        """
+
+        args = self.parser.parse_args(['lorem_impsum.txt'])
+        self.assertEqual(args.filenames, ['lorem_impsum.txt'])
+
+        args = self.parser.parse_args(['lorem_impsum.txt', 'lorem_impsum.zip'])
+        self.assertEqual(
+            args.filenames,
+            ['lorem_impsum.txt', 'lorem_impsum.zip']
+        )
+
+        args = self.parser.parse_args(['-a', 'sha1', 'lorem_impsum.txt'])
+        self.assertEqual(args.filenames, ['lorem_impsum.txt'])
+
+    def test_checksums(self):
+        """
+        Test parsing checksums
+        """
+
+        args = self.parser.parse_args(['-c', 'CHECKSUM'])
+        self.assertEqual(args.checksums, 'CHECKSUM')
+
+        args = self.parser.parse_args(['-a', 'sha1', '-c', 'CHECKSUM'])
+        self.assertEqual(args.checksums, 'CHECKSUM')
+
+    def test_checksums(self):
+        """
+        Test parsing checksums
+        """
+
+        args = self.parser.parse_args(['-c', 'DIRECTORY'])
+        self.assertEqual(args.checksums, 'DIRECTORY')
+
+        args = self.parser.parse_args(['-a', 'sha1', '-c', 'DIRECTORY'])
+        self.assertEqual(args.checksums, 'DIRECTORY')
+
+    def test_cathash(self):
+        """
+        Test parsing cathash
+        """
+
+        args = self.parser.parse_args(['-t', 'lorem_impsum.txt'])
+        self.assertEqual(args.cathash, ['lorem_impsum.txt'])
+
+        args = self.parser.parse_args(['-t', 'lorem_impsum.txt', 'lorem_impsum.zip'])
+        self.assertEqual(
+            args.cathash,
+            ['lorem_impsum.txt', 'lorem_impsum.zip']
+        )
+
+        args = self.parser.parse_args(['-a', 'sha1', '-t', 'lorem_impsum.txt'])
+        self.assertEqual(args.cathash, ['lorem_impsum.txt'])
+
+    def test_algorithm(self):
+        """
+        Test parsing algorithm
+        """
+
+        args = self.parser.parse_args(['lorem_ipsum.txt'])
+        self.assertEqual(args.algorithm, 'sha256')
+
+        args = self.parser.parse_args(['-a', 'sha1', 'lorem_ipsum.txt'])
+        self.assertEqual(args.algorithm, 'sha1')
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,8 +7,7 @@ from filehash import FileHash, SUPPORTED_ALGORITHMS
 
 default_hash_algorithm = 'sha256'
 
-
-def parse_command_line():
+def create_parser():
     parser = argparse.ArgumentParser(
         description="Tool for calculating the checksum / hash of a file or directory."
     )
@@ -45,7 +44,8 @@ def parse_command_line():
         nargs='*',
         help=u"files to calculate the checksum/hash on"
         )
-    return parser.parse_args()
+
+    return parser
 
 
 def process_dir(directory, hasher):
@@ -88,7 +88,7 @@ def process_checksum_file(checksum_filename, hasher):
 
 
 def main():
-    args = parse_command_line()
+    args = create_parser().parse_args()
 
     if not args.algorithm.lower() in SUPPORTED_ALGORITHMS:
         print("ERROR: Unknown checksum/hash algorithm: {0}".format(args.algorithm))
