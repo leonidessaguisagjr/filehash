@@ -1,6 +1,12 @@
 ``filehash``
 ============
 
+.. image:: https://img.shields.io/pypi/v/filehash.svg
+        :target: https://pypi.python.org/pypi/filehash
+
+.. image:: https://img.shields.io/travis/mmore500/keyname.svg
+        :target: https://travis-ci.org/mmore500/keyname
+
 Python module to facilitate calculating the checksum or hash of a file.  Tested against Python 2.7, Python 3.6, PyPy 2.7 and PyPy 3.5.  Currently supports `Adler-32 <https://en.wikipedia.org/wiki/Adler-32>`_, `CRC32 <https://en.wikipedia.org/wiki/Cyclic_redundancy_check>`_, `MD5 <https://en.wikipedia.org/wiki/MD5>`_, `SHA-1 <https://en.wikipedia.org/wiki/SHA-1>`_, `SHA-256 and SHA-512 <https://en.wikipedia.org/wiki/SHA-2>`_.
 
 ``FileHash`` class
