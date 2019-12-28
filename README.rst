@@ -4,10 +4,10 @@
 .. image:: https://img.shields.io/pypi/v/filehash.svg
         :target: https://pypi.python.org/pypi/filehash
 
-.. image:: https://img.shields.io/travis/mmore500/keyname.svg
-        :target: https://travis-ci.org/mmore500/keyname
+.. image:: https://img.shields.io/travis/leonidessaguisagjr/keyname.svg
+        :target: https://travis-ci.org/leonidessaguisagjr/keyname
 
-Python module to facilitate calculating the checksum or hash of a file.  Tested against Python 2.7, Python 3.6, PyPy 2.7 and PyPy 3.5.  Currently supports `Adler-32 <https://en.wikipedia.org/wiki/Adler-32>`_, `CRC32 <https://en.wikipedia.org/wiki/Cyclic_redundancy_check>`_, `MD5 <https://en.wikipedia.org/wiki/MD5>`_, `SHA-1 <https://en.wikipedia.org/wiki/SHA-1>`_, `SHA-256 and SHA-512 <https://en.wikipedia.org/wiki/SHA-2>`_.
+Python module to facilitate calculating the checksum or hash of a file.  Tested against Python 2.7.x, Python 3.6.x, Python 3.7.x, Python 3.8.x, PyPy 2.7.x and PyPy3 3.6.x.  Currently supports `Adler-32 <https://en.wikipedia.org/wiki/Adler-32>`_, `CRC32 <https://en.wikipedia.org/wiki/Cyclic_redundancy_check>`_, `MD5 <https://en.wikipedia.org/wiki/MD5>`_, `SHA-1 <https://en.wikipedia.org/wiki/SHA-1>`_, `SHA-256 and SHA-512 <https://en.wikipedia.org/wiki/SHA-2>`_.
 
 ``FileHash`` class
 ------------------
@@ -15,7 +15,7 @@ Python module to facilitate calculating the checksum or hash of a file.  Tested 
 The ``FileHash`` class wraps around the ``hashlib`` (provides hashing for MD5, SHA-1, SHA-256 and SHA-512) and ``zlib`` (provides checksums for Adler-32 and CRC32) modules and contains the following methods:
 
 - ``hash_file(filename)`` - Calculate the file hash for a single file.  Returns a string with the hex digest.
-- ``hash_files(filename)`` - Calculate the file hash for a multiple files.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
+- ``hash_files(filename)`` - Calculate the file hash for multiple files.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
 - ``hash_dir(path, pattern='*')`` - Calculate the file hashes for an entire directory.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
 - ``cathash_files(filename)`` - Calculate a single hash for multiple files.  Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.  Returns a string with the hex digest.
 - ``cathash_dir(path, pattern='*')`` - Calculate a single hash for an entire directory of files. Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value. Returns a string with the hex digest.
