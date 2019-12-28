@@ -7,8 +7,7 @@ from filehash import FileHash, SUPPORTED_ALGORITHMS
 
 default_hash_algorithm = 'sha256'
 
-
-def parse_command_line():
+def create_parser():
     parser = argparse.ArgumentParser(
         description="Tool for calculating the checksum / hash of a file or directory."
     )
@@ -19,14 +18,34 @@ def parse_command_line():
             ", ".join(['"' + a + '"' for a in SUPPORTED_ALGORITHMS]),
             default_hash_algorithm
         ),
-        default=default_hash_algorithm)
+        default=default_hash_algorithm
+    )
+
     parser_group = parser.add_mutually_exclusive_group(required=True)
-    parser_group.add_argument(u"-c", u"--checksums",
-                              help=u"Read the file and verify the checksums/hashes match.")
-    parser_group.add_argument(u"-d", u"--directory",
-                              help=u"Calculate the checksums/hashes for a directory.")
-    parser_group.add_argument(u"filename", nargs="?", help=u"file to calculate the checksum/hash")
-    return parser.parse_args()
+    parser_group.add_argument(
+        u"-c",
+        u"--checksums",
+        help=u"Read the file and verify the checksums/hashes match."
+        )
+    parser_group.add_argument(
+        u"-d",
+        u"--directory",
+        help=u"Calculate the checksums/hashes for a directory."
+        )
+    parser_group.add_argument(
+        u"-t",
+        u"--cathash",
+        nargs='+',
+        help=u"Process multiple files to yield a single hash value."
+        )
+    parser_group.add_argument(
+        u"filenames",
+        default=[],
+        nargs='*',
+        help=u"files to calculate the checksum/hash on"
+        )
+
+    return parser
 
 
 def process_dir(directory, hasher):
@@ -38,12 +57,18 @@ def process_dir(directory, hasher):
         print("{0} *{1}".format(result.hash, result.filename))
 
 
-def process_file(filename, hasher):
-    if not os.path.isfile(filename):
-        print("ERROR: Unable to read file: {0}".format(filename))
-        sys.exit(1)
-    result = hasher.hash_file(filename)
-    print("{0} *{1}".format(result, filename))
+def process_cathash(filenames, hasher):
+    result = hasher.cathash_files(filenames)
+    print("{0} *{1}".format(result, " ".join(filenames)))
+
+
+def process_files(filenames, hasher):
+    for filename in filenames:
+        if not os.path.isfile(filename):
+            print("ERROR: Unable to read file: {0}".format(filename))
+            sys.exit(1)
+        result = hasher.hash_file(filename)
+        print("{0} *{1}".format(result, filename))
 
 
 def process_checksum_file(checksum_filename, hasher):
@@ -63,7 +88,7 @@ def process_checksum_file(checksum_filename, hasher):
 
 
 def main():
-    args = parse_command_line()
+    args = create_parser().parse_args()
 
     if not args.algorithm.lower() in SUPPORTED_ALGORITHMS:
         print("ERROR: Unknown checksum/hash algorithm: {0}".format(args.algorithm))
@@ -75,8 +100,10 @@ def main():
         process_checksum_file(args.checksums, hasher)
     elif args.directory:
         process_dir(args.directory, hasher)
+    elif args.cathash:
+        process_cathash(args.cathash, hasher)
     else:
-        process_file(args.filename, hasher)
+        process_files(args.filenames, hasher)
 
 
 if __name__ == "__main__":

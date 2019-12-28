@@ -9,7 +9,10 @@ Python module to facilitate calculating the checksum or hash of a file.  Tested 
 The ``FileHash`` class wraps around the ``hashlib`` (provides hashing for MD5, SHA-1, SHA-256 and SHA-512) and ``zlib`` (provides checksums for Adler-32 and CRC32) modules and contains the following methods:
 
 - ``hash_file(filename)`` - Calculate the file hash for a single file.  Returns a string with the hex digest.
+- ``hash_files(filename)`` - Calculate the file hash for a multiple files.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
 - ``hash_dir(path, pattern='*')`` - Calculate the file hashes for an entire directory.  Returns a list of tuples where each tuple contains the filename and the calculated hash.
+- ``cathash_files(filename)`` - Calculate a single hash formultiple files.  Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.  Returns a string with the hex digest.
+- ``cathash_dir(path, pattern='*')`` - Calculate a single hash for an entire directory of files. Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value. Returns a string with the hex digest.
 - ``verify_sfv(sfv_filename)`` - Reads the specified SFV (Simple File Verification) file and calculates the CRC32 checksum for the files listed, comparing the calculated CRC32 checksums against the specified expected checksums.  Returns a list of tuples where each tuple contains the filename and a boolean value indicating if the calculated CRC32 checksum matches the expected CRC32 checksum.  To find out more about SFV files, see the `Simple file verification entry in Wikipedia <https://en.wikipedia.org/wiki/Simple_file_verification>`_.
 - ``verify_checksums(checksum_filename)`` - Reads the specified file and calculates the hashes for the files listed, comparing the calculated hashes against the specified expected hashes.  Returns a list of tuples where each tuple contains the filename and a boolean value indicating if the calculated hash matches the expected hash.
 
