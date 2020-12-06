@@ -149,7 +149,7 @@ class FileHash:
     Class wrapping the hashlib module to facilitate calculating file hashes.
     """
 
-    def __init__(self, hash_algorithm='sha256', chunk_size=4096):
+    def __init__(self, hash_algorithm='sha256', chunk_size=8192):
         """
         Initialize the FileHash class.
 
@@ -164,6 +164,7 @@ class FileHash:
         if hash_algorithm not in SUPPORTED_ALGORITHMS:
             raise ValueError("Error, unsupported hash/checksum algorithm: {0}".format(hash_algorithm))
         self.chunk_size = chunk_size
+        # print("FileHash:INIT: chunk_size =", self.chunk_size)
         self.hash_algorithm = hash_algorithm
 
     def hash_file(self, filename):
