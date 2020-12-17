@@ -6,7 +6,7 @@ from filehash import FileHash, SUPPORTED_ALGORITHMS
 
 
 default_hash_algorithm = 'sha256'
-
+default_chunk_size = 8192
 def create_parser():
     parser = argparse.ArgumentParser(
         description="Tool for calculating the checksum / hash of a file or directory."
@@ -19,6 +19,15 @@ def create_parser():
             default_hash_algorithm
         ),
         default=default_hash_algorithm
+    )
+    parser.add_argument(
+        u"-b",
+        u"--blocksize",
+        type=int,
+        help=u"Blocksize/ChunkSize for hash algorithm to use.  Valid values are multiples of 4096.  Defaults to \"{0}\"".format(
+            default_chunk_size
+        ),
+        default=default_chunk_size
     )
 
     parser_group = parser.add_mutually_exclusive_group(required=True)
@@ -95,7 +104,7 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    hasher = FileHash(args.algorithm.lower())
+    hasher = FileHash(args.algorithm.lower(), args.blocksize)
     if args.checksums:
         process_checksum_file(args.checksums, hasher)
     elif args.directory:
