@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='filehash',
-      version='0.1.dev5',
+      version='0.1.dev6',
       description='Module and command-line tool that wraps around hashlib and zlib to facilitate generating checksums / hashes of files and directories.',
       long_description=long_description,
       long_description_content_type='text/x-rst',
@@ -27,6 +27,8 @@ setup(name='filehash',
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
             "Topic :: Software Development :: Libraries",
             "Topic :: Utilities",
       ],
