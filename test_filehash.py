@@ -19,7 +19,9 @@ class TestFileHash(unittest.TestCase):
                 'crc32': 'A8504B9F',
                 'md5': '72f5d9e3a5fa2f2e591487ae02489388',
                 'sha1': 'f7ef3b7afaf1518032da1b832436ef3bbfd4e6f0',
+                'sha224': '9b80ecc279231d72c94385bd27c897cf90d1fd3dd41a88a3d36ba6f3',
                 'sha256': '52ee30e57cc262b84ff73377223818825583b8120394ef54e9b4cd7dbec57d18',
+                'sha384': '1b5b458dacc254a1236cb713b75acfd86dcdde92c6b7a3619cfc65225f2d0dbb47b4c1cf0fd8d58c3c75f2e3127cbb0a',
                 'sha512': 'dfc4e13af6e57b4982bdac595e83804dcb2d126204baa290f19015982d13e822a07efa1f0e63a8078e10f219c69d26caf4f21a50e3dd5bdf09bea73dfe224e43'
             },
             'lorem_ipsum.zip': {
@@ -27,7 +29,9 @@ class TestFileHash(unittest.TestCase):
                 'crc32': '7425D3BE',
                 'md5': '860f55178330e675fb0d55ac1f2c27b2',
                 'sha1': '03da86258449317e8834a54cf8c4d5b41e7c7128',
+                'sha224': 'ac8991d5bcebdecbc93286ba4010221127e423c5ce903d8e98d71289',
                 'sha256': '8acac0dc358b981aef0dcecc6e6d8f4f1fb98968d61e613b430b2389d9d385e5',
+                'sha384': '84606ebac41d2d2aaa189a8b1359f966cb8d9e049a517e31768724b6f8543261a0ef64154802fecd10c6d3838a555a37',
                 'sha512': 'edd841dd0ed5bb09fd21054de3aebbbd44d779beaa0289d63bfb64f0eaaa85c73993d5cbc0d0d1dfcc263d7bd8d43bdafe2bcc398cc8453823e50f0d90a3b0ff'
             },
             'lorem_ipsum_txt+zip.cat': {
@@ -35,7 +39,9 @@ class TestFileHash(unittest.TestCase):
                 'crc32': 'C2D8AD7F',
                 'md5': '96a7ef7737b1469621832ef6f5b0bc25',
                 'sha1': '1ac64d235601ba35d44c56953f338cba294bff9f',
+                'sha224': 'f32ea20ea008f9b6590b444ef82c383af4f666ca3de1278cd49359f2',
                 'sha256': '49809760aa14e469d3b0bed8a4ba02d46fc5f61f5002499fe10e18d8c531925c',
+                'sha384': 'e786fb788469320ef001da2540ad4aabcc971a7cd2c2eb3d5c562cc763964daf674a362ef7024b27e494bf670ed1e69d',
                 'sha512': '986783f5f27cbed97b2b1646239ea34d25812c3cb69a80116137e544285a8032df940963ae42576931a35195c433ab0239ea012469b21fcb3df23fce21a9dfba'
             },
             'lorem_ipsum_zip+txt.cat': {
@@ -43,7 +49,9 @@ class TestFileHash(unittest.TestCase):
                 'crc32': '6EA6DE9B',
                 'md5': '5ff44b587e9630bff7134b7e00726b44',
                 'sha1': 'f1741c227c170061863370cc89af4932fad5fcb7',
+                'sha224': '0155e4883599dbea532312d92db61f9610e7b38511ee5bf87972f08c',
                 'sha256': '64bd25fbb84590cafd716d373796df3a2510e6a14104c30c7d83574cadd6277f',
+                'sha384': 'e49c5329024cb8a7da51886647800eba49f3db3e2b21279474db85b078cccc411d86529ae5c50d81a3370aaf1f918fb2',
                 'sha512': '775c5b1f2015f777485868ee6de013a29391c4e79c990adeb20d68412d8b650a18d6e3806ded4e0e2ffe197e2a51a52e651d09efe4895a3979f96c34d8cd4ce6'
             }
         }
@@ -284,16 +292,16 @@ class TestCLI(unittest.TestCase):
         args = self.parser.parse_args(['-a', 'sha1', '-c', 'CHECKSUM'])
         self.assertEqual(args.checksums, 'CHECKSUM')
 
-    def test_checksums(self):
+    def test_directories(self):
         """
-        Test parsing checksums
+        Test parsing directories
         """
 
-        args = self.parser.parse_args(['-c', 'DIRECTORY'])
-        self.assertEqual(args.checksums, 'DIRECTORY')
+        args = self.parser.parse_args(['-d', 'DIRECTORY'])
+        self.assertEqual(args.directory, 'DIRECTORY')
 
-        args = self.parser.parse_args(['-a', 'sha1', '-c', 'DIRECTORY'])
-        self.assertEqual(args.checksums, 'DIRECTORY')
+        args = self.parser.parse_args(['-a', 'sha1', '-d', 'DIRECTORY'])
+        self.assertEqual(args.directory, 'DIRECTORY')
 
     def test_cathash(self):
         """
