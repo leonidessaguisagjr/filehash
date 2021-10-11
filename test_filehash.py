@@ -16,6 +16,8 @@ class TestFileHash(unittest.TestCase):
         self.expected_results = {
             'lorem_ipsum.txt': {
                 'adler32': 'E5ED731F',
+                'blake2b': 'e9df9d70cfcefb0e2a1e8775ff7b9c0e5f008a76a57310e76a0e43b8fa6801d4eb9f93f1149f155cb85c6e067d99a5c0120205fb52144a29e775da6d4424fc29',
+                'blake2s': '9725b3b049743de49625880c5a7693a6be7f8c1bc556cbab8ebcf93ce57a15f6',
                 'crc32': 'A8504B9F',
                 'md5': '72f5d9e3a5fa2f2e591487ae02489388',
                 'sha1': 'f7ef3b7afaf1518032da1b832436ef3bbfd4e6f0',
@@ -26,6 +28,8 @@ class TestFileHash(unittest.TestCase):
             },
             'lorem_ipsum.zip': {
                 'adler32': '5195A9D6',
+                'blake2b': 'c37b8c68814d9e04cd260d04cf66e847564b55a4aa99f073ca6030db1559897da252c4cb5c9987c0df05b467e8e502e4034741073bd53d485192c4c6cc1f6481',
+                'blake2s': '77b1d3377299ef72728928e3837e75bd985ae5ea14f1fa1e5114cf685a392ac9',
                 'crc32': '7425D3BE',
                 'md5': '860f55178330e675fb0d55ac1f2c27b2',
                 'sha1': '03da86258449317e8834a54cf8c4d5b41e7c7128',
@@ -36,6 +40,8 @@ class TestFileHash(unittest.TestCase):
             },
             'lorem_ipsum_txt+zip.cat': {
                 'adler32': '8BA81D03',
+                'blake2b': 'f142f06a6b56d1857a253cb1913885310a3f0d53f5adfd9c1faa154a6866cc739d012a4c21f7dd80b145f1fa9f3c31e615f39890a0a62c7436934d99c8331b03',
+                'blake2s': 'ad642e5d6dee120f57baa1e8c8dc46631ea773b13fb0d3696e0614603d32794a',
                 'crc32': 'C2D8AD7F',
                 'md5': '96a7ef7737b1469621832ef6f5b0bc25',
                 'sha1': '1ac64d235601ba35d44c56953f338cba294bff9f',
@@ -46,6 +52,8 @@ class TestFileHash(unittest.TestCase):
             },
             'lorem_ipsum_zip+txt.cat': {
                 'adler32': 'F0A31D03',
+                'blake2b': 'c6dd7711e3790daabc5188dc397c290c9811d200cc1efc5f91ea5ff299d7c3dce43040fd183b06ec95dc39d7fd752f96848ac3b3b723f140dfe1c44223dd431f',
+                'blake2s': 'c0c97777881c047b2db4f4d4433746a5a4eebb15b2ea0a1f2f4ab0a78bb60cff',
                 'crc32': '6EA6DE9B',
                 'md5': '5ff44b587e9630bff7134b7e00726b44',
                 'sha1': 'f1741c227c170061863370cc89af4932fad5fcb7',

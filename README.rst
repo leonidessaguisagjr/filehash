@@ -7,7 +7,9 @@
 .. image:: https://img.shields.io/travis/leonidessaguisagjr/filehash.svg
         :target: https://travis-ci.org/leonidessaguisagjr/filehash
 
-Python module to facilitate calculating the checksum or hash of a file.  Tested against Python 2.7.x, Python 3.6.x, Python 3.7.x, Python 3.8.x, Python 3.9.x, Python 3.10.x, PyPy 2.7.x and PyPy3 3.7.x.  Currently supports `Adler-32 <https://en.wikipedia.org/wiki/Adler-32>`_, `CRC32 <https://en.wikipedia.org/wiki/Cyclic_redundancy_check>`_, `MD5 <https://en.wikipedia.org/wiki/MD5>`_, `SHA-1 <https://en.wikipedia.org/wiki/SHA-1>`_, `SHA-256 and SHA-512 <https://en.wikipedia.org/wiki/SHA-2>`_.
+Python module to facilitate calculating the checksum or hash of a file.  Tested against Python 2.7.x, Python 3.6.x, Python 3.7.x, Python 3.8.x, Python 3.9.x, Python 3.10.x, PyPy 2.7.x and PyPy3 3.7.x.  Currently supports `Adler-32 <https://en.wikipedia.org/wiki/Adler-32>`_, `BLAKE2b, BLAKE2s <https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2>`_, `CRC32 <https://en.wikipedia.org/wiki/Cyclic_redundancy_check>`_, `MD5 <https://en.wikipedia.org/wiki/MD5>`_, `SHA-1 <https://en.wikipedia.org/wiki/SHA-1>`_, `SHA-224, SHA-256, SHA-384 and SHA-512 <https://en.wikipedia.org/wiki/SHA-2>`_.
+
+(Note: BLAKE2b and BLAKE2s are only supported on Python 3.6.x and later.)
 
 ``FileHash`` class
 ------------------

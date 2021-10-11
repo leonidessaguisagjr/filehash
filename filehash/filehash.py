@@ -4,6 +4,7 @@ import glob
 import hashlib
 import os
 import os.path
+import sys
 import zlib
 
 
@@ -314,5 +315,10 @@ _ALGORITHM_MAP = {
     'sha384' : hashlib.sha384,
     'sha512' : hashlib.sha512,
 }
+# Algorithms that were added in Python 3.6.x
+# https://docs.python.org/3.6/library/hashlib.html#hash-algorithms
+if sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+    _ALGORITHM_MAP["blake2b"] = hashlib.blake2b
+    _ALGORITHM_MAP["blake2s"] = hashlib.blake2s
 
 SUPPORTED_ALGORITHMS = set(_ALGORITHM_MAP.keys())

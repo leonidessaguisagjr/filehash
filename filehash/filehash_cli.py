@@ -15,7 +15,7 @@ def create_parser():
         u"-a",
         u"--algorithm",
         help=u"Checksum/hash algorithm to use.  Valid values are: {0}.  Defaults to \"{1}\"".format(
-            ", ".join(['"' + a + '"' for a in SUPPORTED_ALGORITHMS]),
+            ", ".join(['"' + a + '"' for a in sorted(SUPPORTED_ALGORITHMS)]),
             default_hash_algorithm
         ),
         default=default_hash_algorithm
