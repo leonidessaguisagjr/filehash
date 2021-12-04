@@ -264,6 +264,7 @@ class FileHash:
         with open(checksum_filename, mode="r") as checksum_list:
             for line in checksum_list:
                 expected_hash, filename = line.strip().split(" ", 1)
+                filename = filename.strip()
                 if filename.startswith("*"):
                     filename = filename[1:]
                 actual_hash = self.hash_file(filename)
