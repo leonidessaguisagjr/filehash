@@ -203,11 +203,9 @@ class FileHash:
         :returns: List of tuples where each tuple contains a filename and the
                   calculated hash for each file.
         """
-        saved_dir = os.getcwd()
-        os.chdir(os.path.abspath(path))  # pushd
-        filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
-        result = self.hash_files(filenames)
-        os.chdir(saved_dir)  # popd
+        with _chdir(os.path.abspath(path)):
+            filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
+            result = self.hash_files(filenames)
         return result
 
     def cathash_files(self, filenames):
@@ -237,11 +235,9 @@ class FileHash:
                         Defaults to '*' i.e. all files in the directory.
         :returns: Digest of the files, in hex.
         """
-        saved_dir = os.getcwd()
-        os.chdir(os.path.abspath(path))  # pushd
-        filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
-        result = self.cathash_files(filenames)
-        os.chdir(saved_dir)  # popd
+        with _chdir(os.path.abspath(path)):
+            filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
+            result = self.cathash_files(filenames)
         return result
 
     def verify_checksums(self, checksum_filename):
