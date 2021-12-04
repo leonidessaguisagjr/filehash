@@ -1,5 +1,6 @@
 import abc
 import collections
+from contextlib import contextmanager
 import glob
 import hashlib
 import os
@@ -202,11 +203,9 @@ class FileHash:
         :returns: List of tuples where each tuple contains a filename and the
                   calculated hash for each file.
         """
-        saved_dir = os.getcwd()
-        os.chdir(os.path.abspath(path))  # pushd
-        filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
-        result = self.hash_files(filenames)
-        os.chdir(saved_dir)  # popd
+        with _chdir(os.path.abspath(path)):
+            filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
+            result = self.hash_files(filenames)
         return result
 
     def cathash_files(self, filenames):
@@ -236,11 +235,9 @@ class FileHash:
                         Defaults to '*' i.e. all files in the directory.
         :returns: Digest of the files, in hex.
         """
-        saved_dir = os.getcwd()
-        os.chdir(os.path.abspath(path))  # pushd
-        filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
-        result = self.cathash_files(filenames)
-        os.chdir(saved_dir)  # popd
+        with _chdir(os.path.abspath(path)):
+            filenames = [filename for filename in glob.glob(pattern) if os.path.isfile(filename)]
+            result = self.cathash_files(filenames)
         return result
 
     def verify_checksums(self, checksum_filename):
@@ -261,7 +258,8 @@ class FileHash:
                   there was a checksum mismatch (False).
         """
         result = []
-        with open(checksum_filename, mode="r") as checksum_list:
+        checksum_dir = os.path.dirname(os.path.realpath(checksum_filename))
+        with open(checksum_filename, mode="r") as checksum_list, _chdir(checksum_dir):
             for line in checksum_list:
                 expected_hash, filename = line.strip().split(" ", 1)
                 if filename.startswith("*"):
@@ -295,7 +293,8 @@ class FileHash:
         if self.hash_algorithm.lower() != 'crc32':
             raise TypeError("SFV verification only supported with the 'crc32' algorithm.")
         result = []
-        with open(sfv_filename, mode="r") as checksum_list:
+        checksum_dir = os.path.dirname(os.path.realpath(sfv_filename))
+        with open(sfv_filename, mode="r") as checksum_list, _chdir(checksum_dir):
             for line in checksum_list:
                 if line.startswith(";"):
                     continue
@@ -304,6 +303,16 @@ class FileHash:
                 result.append(VerifyHashResult(filename, expected_crc32 == actual_crc32))
         return result
 
+@contextmanager
+def _chdir(dir_path):
+    _original = os.getcwd()
+    os.chdir(dir_path)
+    try:
+        yield
+    except:
+        raise Exception('unable to change to hash directory')
+    finally:
+        os.chdir(_original)
 
 _ALGORITHM_MAP = {
     'adler32': Adler32,
