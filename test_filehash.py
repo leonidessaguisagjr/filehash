@@ -1,5 +1,7 @@
 import inspect
+import logging
 import os.path
+import sys
 import unittest
 
 import filehash.filehash
@@ -7,6 +9,10 @@ from filehash import FileHash, SUPPORTED_ALGORITHMS
 
 from filehash.filehash_cli import create_parser
 
+logging.basicConfig(stream=sys.stderr)
+logging.getLogger().setLevel(logging.DEBUG)
+
+logger = logging.getLogger(__file__)
 
 class TestFileHash(unittest.TestCase):
     """Test the FileHash class."""
@@ -64,7 +70,8 @@ class TestFileHash(unittest.TestCase):
             }
         }
         self.current_dir = os.getcwd()
-        os.chdir(os.path.join(os.path.abspath(os.path.dirname(__file__)), "testdata"))
+        self.testdata_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "testdata")
+        os.chdir(self.testdata_dir)
 
     def tearDown(self):
         os.chdir(self.current_dir)
@@ -186,6 +193,16 @@ class TestFileHash(unittest.TestCase):
             results = [result.hashes_match for result in hasher.verify_checksums("hashes." + algo)]
             self.assertTrue(all(results))
 
+    def test_verify_checksums_from_outside_dir(self):
+        """Test the verify_checksums() method from outside the hash directory."""
+        os.chdir('/') # Change out of the "testdata" directory
+        logger.debug('Current directory: %s', os.path.realpath(os.curdir))
+        for algo in SUPPORTED_ALGORITHMS:
+            checksum_file = os.path.join(self.testdata_dir, "hashes." + algo)
+            hasher = FileHash(algo)
+            results = [result.hashes_match for result in hasher.verify_checksums(checksum_file)]
+            self.assertTrue(all(results))
+
     def test_verify_sfv(self):
         """Test the verify_sfv() method."""
         hasher = FileHash('crc32')
@@ -196,6 +213,14 @@ class TestFileHash(unittest.TestCase):
         """Test that verify_sfv() raises an exception if it is not using crc32."""
         hasher = FileHash('sha1')
         self.assertRaises(TypeError, hasher.verify_sfv, "lorem_ipsum.sfv")
+
+    def test_verify_sfv_outside_dir(self):
+        """Test the verify_sfv() method."""
+        os.chdir('/') # Change out of the "testdata" directory
+        checksum_file = os.path.join(self.testdata_dir, "lorem_ipsum.sfv")
+        hasher = FileHash('crc32')
+        results = [result.hashes_match for result in hasher.verify_sfv(checksum_file)]
+        self.assertTrue(all(results))
 
 
 class TestZlibHasherSubclasses(unittest.TestCase):
