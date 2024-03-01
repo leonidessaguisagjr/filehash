@@ -150,7 +150,7 @@ class FileHash:
     Class wrapping the hashlib module to facilitate calculating file hashes.
     """
 
-    def __init__(self, hash_algorithm='sha256', chunk_size=4096):
+    def __init__(self, hash_algorithm: str = 'sha256', chunk_size: int = 4096):
         """
         Initialize the FileHash class.
 
@@ -167,7 +167,7 @@ class FileHash:
         self.chunk_size = chunk_size
         self.hash_algorithm = hash_algorithm
 
-    def hash_file(self, filename):
+    def hash_file(self, filename: str) -> str:
         """
         Method for calculating the hash of a file.
 
@@ -182,7 +182,7 @@ class FileHash:
                 buffer = fp.read(self.chunk_size)
         return hash_func.hexdigest()
 
-    def hash_files(self, filenames):
+    def hash_files(self, filenames: list[str]) -> list[FileHashResult]:
         """
         Method for calculating the hash of multiple files.
 
@@ -192,7 +192,7 @@ class FileHash:
         """
         return [FileHashResult(fn, self.hash_file(fn)) for fn in filenames]
 
-    def hash_dir(self, path, pattern='*'):
+    def hash_dir(self, path, pattern='*') -> list[FileHashResult]:
         """
         Method for calculating the hash of files in a directory.
 
@@ -209,7 +209,7 @@ class FileHash:
         os.chdir(saved_dir)  # popd
         return result
 
-    def cathash_files(self, filenames):
+    def cathash_files(self, filenames: list[str]) -> list[FileHashResult]:
         """
         Method for calculating a single hash from multiple files.
         Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.
@@ -226,7 +226,7 @@ class FileHash:
                     buffer = fp.read(self.chunk_size)
         return hash_func.hexdigest()
 
-    def cathash_dir(self, path, pattern='*'):
+    def cathash_dir(self, path: str, pattern: str = '*'):
         """
         Method for calculating a single hash of files in a directory.
         Files are sorted by their individual hash values and then traversed in that order to generate a combined hash value.
@@ -243,7 +243,7 @@ class FileHash:
         os.chdir(saved_dir)  # popd
         return result
 
-    def verify_checksums(self, checksum_filename):
+    def verify_checksums(self, checksum_filename: str) -> list[VerifyHashResult]:
         """
         Method for verifying the checksums of a file or set of files.  The
         checksum file is a text file where each line has the hash and filename
@@ -270,7 +270,7 @@ class FileHash:
                 result.append(VerifyHashResult(filename, expected_hash == actual_hash))
         return result
 
-    def verify_sfv(self, sfv_filename):
+    def verify_sfv(self, sfv_filename: str) -> list[VerifyHashResult]:
         """
         Method for verifying the checksums of a file or set of files.  The
         sfv (Simple File Verification) file is a text file where each line has
