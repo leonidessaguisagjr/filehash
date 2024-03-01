@@ -88,7 +88,8 @@ def process_checksum_file(checksum_filename, hasher):
 
 
 def main():
-    args = create_parser().parse_args()
+    parser = create_parser()
+    args = parser.parse_args()
 
     if not args.algorithm.lower() in SUPPORTED_ALGORITHMS:
         print("ERROR: Unknown checksum/hash algorithm: {0}".format(args.algorithm))
